@@ -5,10 +5,12 @@ This project was written in Python 2. I am porting this to work on termux for a 
 ===============================<br/><br/>
 
 Goals:<br/>
-[ ] Python 3 syntax conversion<br/>
-[ ] scipy to numpy conversion<br/>
-[ ] Test load_audiofile.py<br/>
-[ ] Test rp_extract.py<br/>
+[ ] Figure out Data<br/>
+[ ] Clean up files; delete what is not needed<br/>
+[x] Python 3 syntax conversion<br/>
+[x] scipy to numpy conversion<br/>
+[x] Test load_audiofile.py<br/>
+[x] Test rp_extract.py<br/>
 
 ===============================<br/>
 Original Project Info<br/>
