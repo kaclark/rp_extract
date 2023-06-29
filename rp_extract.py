@@ -46,6 +46,49 @@ def _chk_asarray(a, axis):
 
     return a, outaxis
 
+# Moment with optional pre-computed mean, equal to a.mean(axis, keepdims=True)
+def _moment(a, moment, axis, *, mean=None):
+    if np.abs(moment - np.round(moment)) > 0:
+        raise ValueError("All moment parameters must be integers")
+
+    if moment == 0 or moment == 1:
+        # By definition the zeroth moment about the mean is 1, and the first
+        # moment is 0.
+        shape = list(a.shape)
+        del shape[axis]
+        dtype = a.dtype.type if a.dtype.kind in 'fc' else np.float64
+
+        if len(shape) == 0:
+            return dtype(1.0 if moment == 0 else 0.0)
+        else:
+            return (ma.ones(shape, dtype=dtype) if moment == 0
+                    else ma.zeros(shape, dtype=dtype))
+    else:
+        # Exponentiation by squares: form exponent sequence
+        n_list = [moment]
+        current_n = moment
+        while current_n > 2:
+            if current_n % 2:
+                current_n = (current_n-1)/2
+            else:
+                current_n /= 2
+            n_list.append(current_n)
+
+        # Starting point for exponentiation by squares
+        mean = a.mean(axis, keepdims=True) if mean is None else mean
+        a_zero_mean = a - mean
+        if n_list[-1] == 1:
+            s = a_zero_mean.copy()
+        else:
+            s = a_zero_mean**2
+
+        # Perform multiplications
+        for n in n_list[-2::-1]:
+            s = s**2
+            if n % 2:
+                s *= a_zero_mean
+        return s.mean(axis)
+
 def skew(a, axis=0, bias=True, nan_policy='propagate'):
     r"""Compute the sample skewness of a data set.
 
@@ -902,7 +945,7 @@ def rp_extract( wavedata,                          # pcm (wav) signal data norma
 
         for b in range(0,matrix.shape[0]):
         
-            rhythm_patterns[b,:] = fft(matrix[b,:], fft_size)
+            rhythm_patterns[b,:] = np.fft.fft(matrix[b,:], fft_size)
 
             # tried this instead, but ...
             #rhythm_patterns[b,:] = fft(real_matrix[b,:], fft_size)   # ... no performance improvement
@@ -1072,7 +1115,7 @@ if __name__ == '__main__':
 
     # example print of first extracted feature vector
     keys = feat.keys()
-    k = keys[0]
+    k = list(keys)[0]
 
     print(k.upper, " feature vector:")
     print(feat[k])
