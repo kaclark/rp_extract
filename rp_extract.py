@@ -21,6 +21,7 @@ from __future__ import print_function
 
 import numpy as np
 from numpy import array, asarray, ma
+from _lib_util import _contains_nan
 # suppress numpy warnings (divide by 0 etc.)
 np.set_printoptions(suppress=True)
 
