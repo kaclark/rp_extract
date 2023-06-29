@@ -7,7 +7,6 @@ This project was written in Python 2. I am porting this to work on termux for a 
 Goals:<br/>
 [ ] Python 3 syntax conversion<br/>
 [ ] scipy to numpy conversion<br/>
-[ ] wavio re-tool<br/>
 [ ] Test load_audiofile.py<br/>
 [ ] Test rp_extract.py<br/>
 
