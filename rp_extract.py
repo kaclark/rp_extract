@@ -20,12 +20,7 @@ Note: In case you alter the code to use transform2mel, librosa needs to be insta
 from __future__ import print_function
 
 import numpy as np
-
-from scipy import stats
-from scipy.fftpack import fft
-#from scipy.fftpack import rfft #  	Discrete Fourier transform of a real sequence.
-from scipy import interpolate
-
+from numpy import array, asarray, ma
 # suppress numpy warnings (divide by 0 etc.)
 np.set_printoptions(suppress=True)
 
@@ -36,6 +31,213 @@ np.set_printoptions(precision=8,
                     linewidth=200,
                     edgeitems=10)
 
+###SCIPY SOURCE CODE#####
+def _chk_asarray(a, axis):
+    if axis is None:
+        a = np.ravel(a)
+        outaxis = 0
+    else:
+        a = np.asarray(a)
+        outaxis = axis
+
+    if a.ndim == 0:
+        a = np.atleast_1d(a)
+
+    return a, outaxis
+
+def skew(a, axis=0, bias=True, nan_policy='propagate'):
+    r"""Compute the sample skewness of a data set.
+
+    For normally distributed data, the skewness should be about zero. For
+    unimodal continuous distributions, a skewness value greater than zero means
+    that there is more weight in the right tail of the distribution. The
+    function `skewtest` can be used to determine if the skewness value
+    is close enough to zero, statistically speaking.
+
+    Parameters
+    ----------
+    a : ndarray
+        Input array.
+    axis : int or None, optional
+        Axis along which skewness is calculated. Default is 0.
+        If None, compute over the whole array `a`.
+    bias : bool, optional
+        If False, then the calculations are corrected for statistical bias.
+    nan_policy : {'propagate', 'raise', 'omit'}, optional
+        Defines how to handle when input contains nan.
+        The following options are available (default is 'propagate'):
+
+          * 'propagate': returns nan
+          * 'raise': throws an error
+          * 'omit': performs the calculations ignoring nan values
+
+    Returns
+    -------
+    skewness : ndarray
+        The skewness of values along an axis, returning NaN where all values
+        are equal.
+
+    Notes
+    -----
+    The sample skewness is computed as the Fisher-Pearson coefficient
+    of skewness, i.e.
+
+    .. math::
+
+        g_1=\frac{m_3}{m_2^{3/2}}
+
+    where
+
+    .. math::
+
+        m_i=\frac{1}{N}\sum_{n=1}^N(x[n]-\bar{x})^i
+
+    is the biased sample :math:`i\texttt{th}` central moment, and
+    :math:`\bar{x}` is
+    the sample mean.  If ``bias`` is False, the calculations are
+    corrected for bias and the value computed is the adjusted
+    Fisher-Pearson standardized moment coefficient, i.e.
+
+    .. math::
+
+        G_1=\frac{k_3}{k_2^{3/2}}=
+            \frac{\sqrt{N(N-1)}}{N-2}\frac{m_3}{m_2^{3/2}}.
+
+    References
+    ----------
+    .. [1] Zwillinger, D. and Kokoska, S. (2000). CRC Standard
+       Probability and Statistics Tables and Formulae. Chapman & Hall: New
+       York. 2000.
+       Section 2.2.24.1
+
+    """
+    def mskew(a, axis=0, bias=True):
+        """
+        Computes the skewness of a data set.
+
+        Parameters
+        ----------
+        a : ndarray
+            data
+        axis : int or None, optional
+            Axis along which skewness is calculated. Default is 0.
+            If None, compute over the whole array `a`.
+        bias : bool, optional
+            If False, then the calculations are corrected for statistical bias.
+
+        Returns
+        -------
+        skewness : ndarray
+            The skewness of values along an axis, returning 0 where all values are
+            equal.
+
+        Notes
+        -----
+        For more details about `skew`, see `scipy.stats.skew`.
+
+        """
+        a, axis = _chk_asarray(a,axis)
+        mean = a.mean(axis, keepdims=True)
+        m2 = _moment(a, 2, axis, mean=mean)
+        m3 = _moment(a, 3, axis, mean=mean)
+        zero = (m2 <= (np.finfo(m2.dtype).resolution * mean.squeeze(axis))**2)
+        with np.errstate(all='ignore'):
+            vals = ma.where(zero, 0, m3 / m2**1.5)
+
+        if not bias and zero is not ma.masked and m2 is not ma.masked:
+            n = a.count(axis)
+            can_correct = ~zero & (n > 2)
+            if can_correct.any():
+                n = np.extract(can_correct, n)
+                m2 = np.extract(can_correct, m2)
+                m3 = np.extract(can_correct, m3)
+                nval = ma.sqrt((n-1.0)*n)/(n-2.0)*m3/m2**1.5
+                np.place(vals, can_correct, nval)
+        return vals
+
+    a, axis = _chk_asarray(a, axis)
+    n = a.shape[axis]
+
+    contains_nan, nan_policy = _contains_nan(a, nan_policy)
+
+    if contains_nan and nan_policy == 'omit':
+        a = ma.masked_invalid(a)
+        return mskew(a, axis, bias)
+
+    mean = a.mean(axis, keepdims=True)
+    m2 = _moment(a, 2, axis, mean=mean)
+    m3 = _moment(a, 3, axis, mean=mean)
+    with np.errstate(all='ignore'):
+        zero = (m2 <= (np.finfo(m2.dtype).resolution * mean.squeeze(axis))**2)
+        vals = np.where(zero, np.nan, m3 / m2**1.5)
+    if not bias:
+        can_correct = ~zero & (n > 2)
+        if can_correct.any():
+            m2 = np.extract(can_correct, m2)
+            m3 = np.extract(can_correct, m3)
+            nval = np.sqrt((n - 1.0) * n) / (n - 2.0) * m3 / m2**1.5
+            np.place(vals, can_correct, nval)
+
+    return vals[()]
+
+def kurtosis(a, axis=0, fisher=True, bias=True):
+    """
+    Computes the kurtosis (Fisher or Pearson) of a dataset.
+
+    Kurtosis is the fourth central moment divided by the square of the
+    variance. If Fisher's definition is used, then 3.0 is subtracted from
+    the result to give 0.0 for a normal distribution.
+
+    If bias is False then the kurtosis is calculated using k statistics to
+    eliminate bias coming from biased moment estimators
+
+    Use `kurtosistest` to see if result is close enough to normal.
+
+    Parameters
+    ----------
+    a : array
+        data for which the kurtosis is calculated
+    axis : int or None, optional
+        Axis along which the kurtosis is calculated. Default is 0.
+        If None, compute over the whole array `a`.
+    fisher : bool, optional
+        If True, Fisher's definition is used (normal ==> 0.0). If False,
+        Pearson's definition is used (normal ==> 3.0).
+    bias : bool, optional
+        If False, then the calculations are corrected for statistical bias.
+
+    Returns
+    -------
+    kurtosis : array
+        The kurtosis of values along an axis. If all values are equal,
+        return -3 for Fisher's definition and 0 for Pearson's definition.
+
+    Notes
+    -----
+    For more details about `kurtosis`, see `scipy.stats.kurtosis`.
+
+    """
+    a, axis = _chk_asarray(a, axis)
+    mean = a.mean(axis, keepdims=True)
+    m2 = _moment(a, 2, axis, mean=mean)
+    m4 = _moment(a, 4, axis, mean=mean)
+    zero = (m2 <= (np.finfo(m2.dtype).resolution * mean.squeeze(axis))**2)
+    with np.errstate(all='ignore'):
+        vals = ma.where(zero, 0, m4 / m2**2.0)
+
+    if not bias and zero is not ma.masked and m2 is not ma.masked:
+        n = a.count(axis)
+        can_correct = ~zero & (n > 3)
+        if can_correct.any():
+            n = np.extract(can_correct, n)
+            m2 = np.extract(can_correct, m2)
+            m4 = np.extract(can_correct, m4)
+            nval = 1.0/(n-2)/(n-3)*((n*n-1.0)*m4/m2**2.0-3*(n-1)**2.0)
+            np.place(vals, can_correct, nval+3.0)
+    if fisher:
+        return vals - 3
+    else:
+        return vals
 
 # INITIALIZATION: Constants & Mappings
 
@@ -145,7 +347,7 @@ def periodogram(x,win,Fs=None,nfft=1024):
     #    Fs = 2 * np.pi         # commented out because unused
    
     U  = np.dot(win.conj().transpose(), win) # compensates for the power of the window.
-    Xx = fft((x * win),nfft) # verified
+    Xx = np.fft.fft((x * win),nfft) # verified
     P  = Xx*np.conjugate(Xx)/U
     
     # Compute the 1-sided or 2-sided PSD [Power/freq] or mean-square [Power].
@@ -221,8 +423,8 @@ def calc_statistical_features(matrix):
     
     result[:,0] = np.mean(matrix, axis=1)
     result[:,1] = np.var(matrix, axis=1, dtype=np.float64) # the values for variance differ between MATLAB and Numpy!
-    result[:,2] = stats.skew(matrix, axis=1)
-    result[:,3] = stats.kurtosis(matrix, axis=1, fisher=False) # Matlab calculates Pearson's Kurtosis
+    result[:,2] = skew(matrix, axis=1)
+    result[:,3] = kurtosis(matrix, axis=1, fisher=False) # Matlab calculates Pearson's Kurtosis
     result[:,4] = np.median(matrix, axis=1)
     result[:,5] = np.min(matrix, axis=1)
     result[:,6] = np.max(matrix, axis=1)
