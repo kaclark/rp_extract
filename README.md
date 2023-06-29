@@ -1,3 +1,16 @@
+https://github.com/tuwien-musicir/rp_extract<br/>
+===============================<br/>
+Rennovated by: Keanu Clark<br/><br/>
+This project was written in Python 2. I am porting this to work on termux for a pixel 6, meaning fortran in scipy will not work.<br/> 
+===============================<br/><br/>
+
+Goals:<br/>
+[ ] Python 3 syntax conversion<br/>
+[ ] scipy to numpy conversion<br/>
+[ ] wavio re-tool
+[ ] Test load_audiofile.py<br/>
+[ ] Test rp_extract.py<br/>
+
 ===============================<br/>
 Original Project Info<br/>
 ===============================<br/><br/>
@@ -20,16 +33,3 @@ repository and the tutorials included.
 
 Main Authors: Thomas Lidy (audiofeature), Alexander Schindler (slychief)
 
-https://github.com/tuwien-musicir/rp_extract
-
-===============================<br/>
-Rennovated by: Keanu Clark<br/><br/>
-This project was written in Python 2. I am porting this to work on termux for a pixel 6, meaning fortran in scipy will not work.<br/> 
-===============================<br/><br/>
-
-Goals:<br/>
-[ ] Python 3 syntax conversion<br/>
-[ ] scipy to numpy conversion<br/>
-[ ] wavio re-tool
-[ ] Test load_audiofile.py<br/>
-[ ] Test rp_extract.py<br/>
