@@ -7,12 +7,13 @@ from numpy.lib import stride_tricks
 import matplotlib.pyplot as plt
 
 
-def plotmatrix(features,xlabel=None,ylabel=None):
+def plotmatrix(features,xlabel=None,ylabel=None,savefp="ryth.png"):
     plt.figure()
     plt.imshow(features, origin='lower', aspect='auto', interpolation='nearest', cmap='jet')
     if xlabel: plt.xlabel(xlabel)
     if ylabel: plt.ylabel(ylabel)
-    plt.show()
+    plt.savefig(savefp)
+    #plt.show()
 
 # alternate version using pcolor
 # from pylab import pcolor, show, colorbar, xticks, yticks
@@ -24,10 +25,10 @@ def plotmatrix(features,xlabel=None,ylabel=None):
 #show()
 
 
-def plotrp(features, reshape=True, rows=24, cols=60):
+def plotrp(features, reshape=True, rows=24, cols=60, savefp="ryth.png"):
     if reshape:
         features = features.reshape(rows, cols, order='F')
-    plotmatrix(features,'Modulation Frequency Index','Frequency Band [Bark]')
+    plotmatrix(features,'Modulation Frequency Index','Frequency Band [Bark]', savefp)
 
 
 def plotssd(features, reshape=True, rows=24, cols=7):
@@ -102,10 +103,10 @@ def plot_waveform(samples, plot_width=6, plot_height=4):
 
     # mono wave data is either only 1dim in shape or has a 2dim shape with 1 channel only
     if (len(samples.shape) == 1) or (samples.shape[1] == 1):
-        print "Plotting Mono"
+        print("Plotting Mono")
         plotmono_waveform(samples, plot_width, plot_height)
     else:
-        print "Plotting Stereo"
+        print("Plotting Stereo")
         plotstereo_waveform(samples, plot_width, plot_height)
 
 
