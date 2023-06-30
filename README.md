@@ -5,7 +5,8 @@ This project was written in Python 2. I am porting this to work on termux for a 
 ===============================<br/><br/>
 
 Goals:<br/>
-[ ] Automate Google Slides; output folder of analysis<br/>
+[ ] (Search Function) Find way of interacting with youtube or spotify playlists<br/>
+[ ] (Data Logs) Automate Slides; output folder of analysis<br/>
 [x] Plot Data<br/>
 [x] Figure out Data<br/>
 [x] Clean up files; delete what is not needed<br/>
