@@ -2,11 +2,19 @@ https://github.com/tuwien-musicir/rp_extract<br/>
 ===============================<br/>
 Rennovated by: Keanu Clark<br/><br/>
 This project was written in Python 2. I am porting this to work on termux for a pixel 6, meaning fortran in scipy will not work.<br/> 
+I have imported numpy in place of scipy wherever I could. Scipy source code has been spliced in -- Luckily all normal python. Sklearn has been abandoned<br/>
+The data analysis seems to proceed as it should, but I don't really have control data<br/>
+As a result, I now need to look at a bunch of data and also find a way to collect songs from playlists generated from an inital song<br/>
+The goal is that something in a pattern extracted from the data can filter or partition the playlist. Human input will probably be used for reinforcment learning<br/>
+How to extract alluring features of songs and search through arbitrary playlists for matching motifs?<br/>
 ===============================<br/><br/>
 
 Goals:<br/>
-[ ] (Search Function) Find way of interacting with youtube or spotify playlists<br/>
 [ ] (Data Logs) Automate Slides; output folder of analysis<br/>
+[ ] (Search Function) Find way of interacting with youtube or spotify playlists<br/>
+[x] Test Powerpoint output, load in google slides app<br/>
+[x] Youtube Playlist song url retrieval<br/>
+[x] Download youtube song in .wav format from url<br/>
 [x] Plot Data<br/>
 [x] Figure out Data<br/>
 [x] Clean up files; delete what is not needed<br/>
