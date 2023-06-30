@@ -11,7 +11,8 @@ How to extract alluring features of songs and search through arbitrary playlists
 
 Goals:<br/>
 [ ] (Data Logs) Automate Slides; output folder of analysis<br/>
-[ ] (Search Function) Find way of interacting with youtube or spotify playlists<br/>
+[x] Full YouTube Music API functionality secured<br/>
+[x] (Search Function) Find way of interacting with youtube playlists<br/>
 [x] Test Powerpoint output, load in google slides app<br/>
 [x] Youtube Playlist song url retrieval<br/>
 [x] Download youtube song in .wav format from url<br/>
