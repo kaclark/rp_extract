@@ -5,8 +5,10 @@ This project was written in Python 2. I am porting this to work on termux for a 
 ===============================<br/><br/>
 
 Goals:<br/>
-[ ] Figure out Data<br/>
-[ ] Clean up files; delete what is not needed<br/>
+[ ] Automate Google Slides; output folder of analysis<br/>
+[x] Plot Data<br/>
+[x] Figure out Data<br/>
+[x] Clean up files; delete what is not needed<br/>
 [x] Python 3 syntax conversion<br/>
 [x] scipy to numpy conversion<br/>
 [x] Test load_audiofile.py<br/>
