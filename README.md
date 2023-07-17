@@ -10,12 +10,18 @@ How to extract alluring features of songs and search through arbitrary playlists
 ===============================<br/><br/>
 
 Goals:<br/>
-[ ] (Data Logs) Automate Slides; output folder of analysis<br/>
-[x] Full YouTube Music API functionality secured<br/>
+[ ] (Data Collection) Search to song download<br/>
+[ ] (YT API) Get Home to song downlaod<br/>
+[ ] (YT API) Generate Song Radio<br/>
+[x] (YT API) Full YouTube Music API functionality secured<br/>
+[x] (YT API) Youtube Playlist song url retrieval<br/>
+[ ] (Search Function) Decode search return json<br/>
 [x] (Search Function) Find way of interacting with youtube playlists<br/>
-[x] Test Powerpoint output, load in google slides app<br/>
-[x] Youtube Playlist song url retrieval<br/>
-[x] Download youtube song in .wav format from url<br/>
+[x] (Interface) Fuzzy Finder python integration<br/>
+[ ] (Data Logs) Automate Slides; output folder of analysis<br/>
+[x] (Data Logs) Test Powerpoint output, load in google slides app<br/>
+[x] (YT DLP) Download youtube song in .wav format from url<br/>
+[x] (YT DLP) Integrate yt-dlp into pytohon<br/>
 [x] Plot Data<br/>
 [x] Figure out Data<br/>
 [x] Clean up files; delete what is not needed<br/>
