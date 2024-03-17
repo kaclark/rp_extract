@@ -6,6 +6,7 @@
 - [x] Set up Git 
 - [x] Read, Modify, and Update clipboard
 - [x] Convert Paper Abstract and Intro PDF to Markdown
+- [x] Set up Desktop for Image viewing
 - [ ] Convert Remainder of Paper PDF to Markdown
 - [ ] Test RP Image Generation 
 - [ ] Display RP Image
