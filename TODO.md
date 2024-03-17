@@ -4,7 +4,9 @@
 - [x] Install Numpy
 - [x] Test RP Extract 
 - [x] Set up Git 
-- [ ] Convert paper PDF to Markdown
+- [x] Read, Modify, and Update clipboard
+- [x] Convert Paper Abstract and Intro PDF to Markdown
+- [ ] Convert Remainder of Paper PDF to Markdown
 - [ ] Test RP Image Generation 
 - [ ] Display RP Image
 - [ ] Set up YouTube oauth
